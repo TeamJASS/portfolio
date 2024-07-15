@@ -79,7 +79,7 @@ const userSchema = new Schema(
       },
     ],
 
-    project: [
+    projects: [
       {
         projectName: { type: String },
         description: { type: String },
