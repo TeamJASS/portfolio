@@ -64,10 +64,11 @@ const Login = () => {
   //     console.log(data);
   //     try {
   //       const res = await apiLogin({
-  //         email: data.email,
+  //         userName: data.username,
   //         password: data.password,
   //       });
-  //       console.log("Response:", res);
+  //       console.log("Response:", res.data);
+
   //       console.log("Second: I got called");
   //     } catch (error) {
   //       console.log(error);
