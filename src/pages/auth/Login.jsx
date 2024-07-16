@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import hero from "../../assets/images/signin.png";
+import hero from "../../assets/images/image1.jpeg";
 import googlelogo from "../../assets/images/googlelogo.svg";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";

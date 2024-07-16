@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import hero from "../../assets/images/signup.png";
+import hero from "../../assets/images/image2.jpeg";
 import googlelogo from "../../assets/images/googlelogo.svg";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -195,7 +195,29 @@ const SignUp = () => {
               )}
             </div>
           </div>
-          <div className="mb-4">
+
+          {/* <div className="w-full">
+            <label
+              className="block text-gray-700 text-sm font-semibold mb-2"
+              htmlFor="otherName"
+            >
+              OTHER NAME
+            </label>
+            <input
+              className={`shadow appearance-none rounded w-[60%}] py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+                errors.otherName ? "border-red-500" : ""
+              }`}
+              id="otherName"
+              type="text"
+              placeholder="Other Name"
+              onChange={handleChange}
+              value={formData.otherName}
+            />
+            {errors.otherName && (
+              <p className="text-red-500 text-xs italic">{errors.otherName}</p>
+            )}
+          </div> */}
+          <div className="w-full">
             <label
               className="block text-gray-700 text-sm font-semibold mb-2"
               htmlFor="username"
@@ -216,6 +238,7 @@ const SignUp = () => {
               <p className="text-red-500 text-xs italic">{errors.username}</p>
             )}
           </div>
+
           <div className="mb-4">
             <label
               className="block text-gray-700 text-sm font-semibold mb-2"
@@ -321,7 +344,7 @@ const SignUp = () => {
           <small className="text-center">
             Already have an account?{" "}
             <Link className="text-blue-600" to="/signin">
-              Sign Up
+              Sign in
             </Link>
           </small>
         </form>

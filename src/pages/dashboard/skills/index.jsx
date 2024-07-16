@@ -1,12 +1,23 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
+import { getSkillList } from "../../../services/userSkills";
+import { useSelector } from "react-redux";
 
 const Skills = () => {
+  const { user } = useSelector((state) => ({ ...state }));
   const [skills, setSkills] = useState([]);
   const [skill, setSkill] = useState({ name: "", levelOfProficiency: "" });
   const [isEditing, setIsEditing] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(null);
   const [errors, setErrors] = useState({});
+
+  const fetchSkillList = async () => {
+    setSkills(await getSkillList(user._id));
+  };
+
+  useEffect(() => {
+    fetchSkillList();
+  }, []);
 
   const handleChange = (e) => {
     const { id, value } = e.target;
