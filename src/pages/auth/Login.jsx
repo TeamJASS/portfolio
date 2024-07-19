@@ -1,30 +1,34 @@
 import { Link, useNavigate } from "react-router-dom";
-import hero from "../../assets/images/signin.png";
+import hero from "../../assets/images/image1.jpeg";
 import googlelogo from "../../assets/images/googlelogo.svg";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { LoadingSpinner } from "../../components/Feedbacks";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { useDispatch } from "react-redux";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { apiGetUser, apiLogin, generateToken } from "../../services/auth";
 
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => ({ ...state }));
+
   useEffect(() => {
     if (user && user.role === "user") {
       navigate("/dashboard");
     }
-  }, []);
+  }, [user, navigate]);
+
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     username: "",
+    email: "",
     password: "",
   });
 
   const [errors, setErrors] = useState({
     username: "",
+    email: "",
     password: "",
   });
 
@@ -39,70 +43,78 @@ const Login = () => {
     let isValid = true;
     const newErrors = {};
 
-    if (formData.username.length < 2) {
+    if (!formData.username) {
       isValid = false;
-      newErrors.username = "Username must be at least 2 characters long";
+      newErrors.username = "Username is required";
     }
 
-    if (formData.password.length < 6) {
+    if (!formData.email) {
       isValid = false;
-      newErrors.password = "Password must be at least 6 characters long";
+      newErrors.email = "Email is required";
+    }
+
+    if (!formData.password) {
+      isValid = false;
+      newErrors.password = "Password is required";
     }
 
     setErrors(newErrors);
     return isValid;
   };
 
-  // const LoginForm = () => {
-  //   const {
-  //     register,
-
-  //     formState: { erors },
-  //   } = useForm();
-
-  //   const onSubmit = async (data) => {
-  //     console.log(data);
-  //     try {
-  //       const res = await apiLogin({
-  //         userName: data.username,
-  //         password: data.password,
-  //       });
-  //       console.log("Response:", res.data);
-
-  //       console.log("Second: I got called");
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   };
-  // };
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    console.log("form data", formData);
     if (!validate()) return;
 
     try {
       setLoading(true);
-      const userInfo = {
-        firstName: formData.username,
-        lastName: "",
-        username: formData.username,
-        email: formData.username,
-        role: "user",
-        profile: {
-          profilePicture:
-            "https://images.unsplash.com/photo-1621732560007-ac654b4b3b6a?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-        },
-      };
-      dispatch({
-        type: "LOGGED_IN_USER",
-        payload: userInfo,
+
+      const res = await apiLogin({
+        email: formData.email,
+        password: formData.password,
       });
-      window.localStorage.setItem("portiUser", JSON.stringify(userInfo));
-      toast.success("Sign in successful");
-      navigate("/dashboard");
-      setLoading(false);
+
+      if (res.status === 200) {
+        const response = await apiGetUser(formData.username);
+
+        const user = await response.data.username;
+
+        const res2 = await generateToken({
+          email: user.email,
+          password: formData.password,
+        });
+
+        console.log("Logged in user --->", response);
+        console.log("token--->", res2.data.accessToken);
+        const userInfo = {
+          id: user.id,
+          token: res2.data.accessToken,
+          firstName: user.firstname,
+          lastName: user.lastname,
+          username: user.username,
+          email: user.email,
+          role: "user",
+          profile: {
+            profilePicture:
+              "https://images.unsplash.com/photo-1621732560007-ac654b4b3b6a?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+          },
+        };
+
+        dispatch({
+          type: "LOGGED_IN_USER",
+          payload: userInfo,
+        });
+
+        window.localStorage.setItem("portiUser", JSON.stringify(userInfo));
+        toast.success(`Welcome ${userInfo.firstName}`);
+        navigate("/dashboard");
+      }
     } catch (error) {
-      toast.error("Sign in failed");
+      console.log(error);
+      if (error.response.status === 401) toast.error("Invalid credentials");
+      else toast.error("Sign in failed");
+    } finally {
       setLoading(false);
     }
   };
@@ -127,7 +139,7 @@ const Login = () => {
               className="block text-gray-700 text-sm font-semibold mb-2"
               htmlFor="username"
             >
-              USER NAME
+              USERNAME
             </label>
             <input
               className={`shadow appearance-none rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
@@ -135,12 +147,34 @@ const Login = () => {
               }`}
               id="username"
               type="text"
-              placeholder="User Name"
+              placeholder="Username"
               onChange={handleChange}
               value={formData.username}
             />
             {errors.username && (
               <p className="text-red-500 text-xs italic">{errors.username}</p>
+            )}
+          </div>
+
+          <div className="mb-4 ">
+            <label
+              className="block text-gray-700 text-sm font-semibold mb-2"
+              htmlFor="email"
+            >
+              EMAIL
+            </label>
+            <input
+              className={`shadow appearance-none rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+                errors.email ? "border-red-500" : ""
+              }`}
+              id="email"
+              type="email"
+              placeholder="Email"
+              onChange={handleChange}
+              value={formData.email}
+            />
+            {errors.email && (
+              <p className="text-red-500 text-xs italic">{errors.email}</p>
             )}
           </div>
 
@@ -216,13 +250,13 @@ const Login = () => {
         <div className="relative z-10 flex flex-col items-center justify-center text-center">
           <h2 className="text-white text-4xl font-bold mb-4">Welcome Back</h2>
           <p className="text-white mb-6 text-md">
-            To keep connected with us, enter your details to login your account
+            To keep connected, enter your details to login your account
           </p>
           <Link
             to="/signup"
-            className="text-white bg-gray-500 hover:bg-gray-700 px-6 py-4 rounded-lg"
+            className="text-white bg-gray-500 hover:bg-gray-700 px-4 py-2 rounded-md"
           >
-            Login
+            Sign Up
           </Link>
         </div>
       </div>

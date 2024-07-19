@@ -4,7 +4,9 @@ const AddAchievement = (props) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80 max-h-screen overflow-y-scroll">
       <div className="bg-white p-6 rounded-2xl shadow-lg max-w-lg w-full">
-        <h2 className="text-2xl font-bold mb-4">Add Achievement</h2>
+        <h2 className="text-2xl font-bold mb-4">
+          {props.isEditing ? "Edit Achievement" : "Add Achievement"}
+        </h2>
         <form onSubmit={props.handleSubmit}>
           <div className="mb-4">
             <label
@@ -118,7 +120,7 @@ const AddAchievement = (props) => {
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               type="submit"
             >
-              Add Achievement
+              {props.isEditing ? "Save Changes" : "Add Achievement"}
             </button>
           </div>
         </form>

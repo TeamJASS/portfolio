@@ -13,7 +13,6 @@ import UserRoute from "./components/Routes/UserRoute";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import Achievements from "./pages/dashboard/achievements";
-import Bio from "./pages/dashboard/bio";
 import Experience from "./pages/dashboard/experience";
 import Projects from "./pages/dashboard/projects";
 import Skills from "./pages/dashboard/skills";
@@ -59,14 +58,13 @@ function App() {
       children: [
         { index: true, element: <Dashboard /> },
         { path: "/dashboard/achievements", element: <Achievements /> },
-        { path: "/dashboard/bio", element: <Bio /> },
+        { path: "/dashboard/profile", element: <Profile /> },
         { path: "/dashboard/education", element: <Education /> },
         { path: "/dashboard/experience", element: <Experience /> },
         { path: "/dashboard/preview", element: <Preview /> },
         { path: "/dashboard/projects", element: <Projects /> },
         { path: "/dashboard/skills", element: <Skills /> },
         { path: "/dashboard/socials", element: <Socials /> },
-        { path: "/dashboard/profile", element: <Profile /> },
       ],
     },
   ]);

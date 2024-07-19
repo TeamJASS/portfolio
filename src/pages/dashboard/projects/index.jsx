@@ -5,19 +5,9 @@ import ProjectCard from "../../../components/cards/ProjectCard";
 import { PiFolder } from "react-icons/pi";
 
 const Projects = () => {
-  const [projectList, setProjectList] = useState([
-    // {
-    //   projectName: "Example Project",
-    //   description: "Project Description",
-    //   contribution: "Individual Contribution",
-    //   skills: "React, Node.js",
-    //   link: "http://example.com",
-    //   nameOfInstitution: "Example Institution",
-    //   startDate: "2021-01-01",
-    //   endDate: "2021-12-31",
-    // },
-  ]);
+  const [projectList, setProjectList] = useState([]);
   const [project, setProject] = useState({
+    id: null,
     projectName: "",
     description: "",
     contribution: "",
@@ -28,16 +18,26 @@ const Projects = () => {
     endDate: "",
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  const handleChange = (name, value) => {
     setProject((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setProjectList((prev) => [...prev, project]);
+  const handleSubmit = () => {
+    if (isEdit) {
+      // Editing existing project
+      const updatedProjectList = projectList.map((item) =>
+        item.id === project.id ? project : item
+      );
+      setProjectList(updatedProjectList);
+      setIsEdit(false);
+    } else {
+      // Adding new project
+      setProjectList((prev) => [...prev, { ...project, id: Date.now() }]);
+    }
     setProject({
+      id: null,
       projectName: "",
       description: "",
       contribution: "",
@@ -47,15 +47,44 @@ const Projects = () => {
       startDate: "",
       endDate: "",
     });
-    setIsModalOpen(false); // Close the modal after submission
+    setIsModalOpen(false);
+  };
+
+  const editProject = (id) => {
+    const selectedProject = projectList.find((project) => project.id === id);
+    if (selectedProject) {
+      setProject({ ...selectedProject });
+      setIsEdit(true);
+      setIsModalOpen(true);
+    }
+  };
+
+  const deleteProject = (id) => {
+    const updatedProjectList = projectList.filter(
+      (project) => project.id !== id
+    );
+    setProjectList(updatedProjectList);
   };
 
   const openModal = () => {
     setIsModalOpen(true);
+    setIsEdit(false); // Reset edit mode when opening modal
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
+    setIsEdit(false); // Reset edit mode when closing modal
+    setProject({
+      id: null,
+      projectName: "",
+      description: "",
+      contribution: "",
+      skills: "",
+      link: "",
+      nameOfInstitution: "",
+      startDate: "",
+      endDate: "",
+    });
   };
 
   return (
@@ -63,15 +92,15 @@ const Projects = () => {
       {isModalOpen && (
         <AddProject
           project={project}
-          isModalOpen={isModalOpen}
           handleSubmit={handleSubmit}
           handleChange={handleChange}
           closeModal={closeModal}
+          isEdit={isEdit}
         />
       )}
 
       {projectList.length ? (
-        <div className={`p-5 ${isModalOpen && "blur-sm"}`}>
+        <div className={`p-5 ${isModalOpen ? "blur-sm" : ""}`}>
           <div className="flex justify-between w-full mt-10">
             <h2 className="text-2xl font-bold mb-4">Projects</h2>
             <button
@@ -83,9 +112,13 @@ const Projects = () => {
           </div>
 
           <div className="grid grid-cols-2 gap-7">
-            {projectList.map((project, index) => (
-              <div key={index} className="w-full">
-                <ProjectCard project={project} />
+            {projectList.map((project) => (
+              <div key={project.id} className="w-full">
+                <ProjectCard
+                  project={project}
+                  onEdit={() => editProject(project.id)}
+                  onDelete={() => deleteProject(project.id)}
+                />
               </div>
             ))}
           </div>

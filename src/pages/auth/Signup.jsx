@@ -1,11 +1,12 @@
 import { Link, useNavigate } from "react-router-dom";
-import hero from "../../assets/images/signup.png";
+import hero from "../../assets/images/image2.jpeg";
 import googlelogo from "../../assets/images/googlelogo.svg";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { LoadingSpinner } from "../../components/Feedbacks";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
+import { apiSignUp, generateToken } from "../../services/auth";
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -86,16 +87,34 @@ const SignUp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!validate()) return;
+    if (!validate()) return; // Exit if validation fails
 
     try {
-      setLoading(true);
-      // send information to backend
-      const userInfo = {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        username: formData.username,
+      setLoading(true); // Set loading state to true
+
+      const res = await apiSignUp({
+        firstname: formData.firstName,
+        lastname: formData.lastName,
         email: formData.email,
+        password: formData.password1,
+        username: formData.username,
+      }); // Make API call with form data
+      const newUser = await res.data;
+
+      const res2 = await generateToken({
+        email: newUser.email,
+        password: formData.password1,
+      });
+      const token = await res2.data.accessToken;
+      console.log("new user--->", newUser); // Log the response
+      console.log("Token ----->", token);
+      const userInfo = {
+        token: token,
+        id: newUser.id,
+        firstName: newUser.firstname,
+        lastName: newUser.lastname,
+        username: newUser.username,
+        email: newUser.email,
         role: "user",
         profile: {
           profilePicture:
@@ -109,10 +128,11 @@ const SignUp = () => {
       window.localStorage.setItem("portiUser", JSON.stringify(userInfo));
       toast.success("Sign up successful");
       navigate("/dashboard");
-      setLoading(false);
     } catch (error) {
-      toast.error("Sign up failed");
-      setLoading(false);
+      console.error("Sign up failed", error); // Log the error for debugging
+      toast.error("Sign up failed"); // Show error notification to the user
+    } finally {
+      setLoading(false); // Reset loading state
     }
   };
 
@@ -137,7 +157,7 @@ const SignUp = () => {
           to="/login"
           className="text-white bg-gray-500 hover:bg-gray-700 px-6 py-4 rounded-lg relative"
         >
-          Sign Up
+          Sign In
         </Link>
       </div>
       <div className="col-span-5 md:col-span-3 flex flex-col justify-center items-center p-5 gap-4 bg-[#F8F8FA]">
@@ -195,7 +215,29 @@ const SignUp = () => {
               )}
             </div>
           </div>
-          <div className="mb-4">
+
+          {/* <div className="w-full">
+            <label
+              className="block text-gray-700 text-sm font-semibold mb-2"
+              htmlFor="otherName"
+            >
+              OTHER NAME
+            </label>
+            <input
+              className={`shadow appearance-none rounded w-[60%}] py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+                errors.otherName ? "border-red-500" : ""
+              }`}
+              id="otherName"
+              type="text"
+              placeholder="Other Name"
+              onChange={handleChange}
+              value={formData.otherName}
+            />
+            {errors.otherName && (
+              <p className="text-red-500 text-xs italic">{errors.otherName}</p>
+            )}
+          </div> */}
+          <div className="w-full">
             <label
               className="block text-gray-700 text-sm font-semibold mb-2"
               htmlFor="username"
@@ -216,6 +258,7 @@ const SignUp = () => {
               <p className="text-red-500 text-xs italic">{errors.username}</p>
             )}
           </div>
+
           <div className="mb-4">
             <label
               className="block text-gray-700 text-sm font-semibold mb-2"
@@ -320,8 +363,8 @@ const SignUp = () => {
           </div>
           <small className="text-center">
             Already have an account?{" "}
-            <Link className="text-blue-600" to="/signin">
-              Sign Up
+            <Link className="text-blue-600" to="/login">
+              Sign in
             </Link>
           </small>
         </form>

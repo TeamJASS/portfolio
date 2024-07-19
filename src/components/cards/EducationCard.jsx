@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import { useState } from "react";
 import {
   FaSchool,
@@ -11,7 +10,7 @@ import {
   FaTrash,
 } from "react-icons/fa";
 
-const EducationCard = ({ edu }) => {
+const EducationCard = ({ edu, editEducation, deleteEducation }) => {
   const [showButtons, setShowButtons] = useState(false);
 
   const handleMouseEnter = () => {
@@ -87,10 +86,16 @@ const EducationCard = ({ edu }) => {
 
       {showButtons && (
         <div className="absolute top-4 right-4 flex space-x-2">
-          <button className="bg-blue-500 text-white p-2 rounded-full hover:bg-blue-700">
+          <button
+            onClick={editEducation}
+            className="bg-blue-500 text-white p-2 rounded-full hover:bg-blue-700"
+          >
             <FaEdit className="h-5 w-5" />
           </button>
-          <button className="bg-red-500 text-white p-2 rounded-full hover:bg-red-700">
+          <button
+            onClick={deleteEducation}
+            className="bg-red-500 text-white p-2 rounded-full hover:bg-red-700"
+          >
             <FaTrash className="h-5 w-5" />
           </button>
         </div>
