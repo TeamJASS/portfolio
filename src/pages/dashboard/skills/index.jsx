@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { FaEdit, FaTrashAlt } from "react-icons/fa";
-import { getSkillList } from "../../../services/userSkills";
+// import { getSkillList } from "../../../services/userSkills";
 import { useSelector } from "react-redux";
+import { createSkill, getSkillList } from "../../../services/userSkills";
 
 const Skills = () => {
   const { user } = useSelector((state) => ({ ...state }));
@@ -11,13 +12,15 @@ const Skills = () => {
   const [currentIndex, setCurrentIndex] = useState(null);
   const [errors, setErrors] = useState({});
 
-  const fetchSkillList = async () => {
-    setSkills(await getSkillList(user._id));
-  };
+  // const fetchSkillList = async () => {
+  //   const res = await getSkillList();
+  //   setSkills(res.data.skills);
+  //   console.log(res.data.Skills);
+  // };
 
-  useEffect(() => {
-    fetchSkillList();
-  }, []);
+  // useEffect(() => {
+  //   fetchSkillList();
+  // }, []);
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -33,7 +36,7 @@ const Skills = () => {
     return newErrors;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
@@ -44,10 +47,17 @@ const Skills = () => {
           index === currentIndex ? skill : s
         );
         setSkills(updatedSkills);
+
         setIsEditing(false);
         setCurrentIndex(null);
       } else {
         setSkills((prev) => [...prev, skill]);
+        // const res = await createSkill({
+        //   name: skill.name,
+        //   levelOfProficiency: skill.levelOfProficiency,
+        //   user: user.id,
+        // });
+        // console.log(res);
       }
       setSkill({ name: "", levelOfProficiency: "" });
       setErrors({});
@@ -127,7 +137,7 @@ const Skills = () => {
       </form>
       <div className="mt-6">
         <h1 className="text-3xl font-bold mt-16 mb-5">Skills</h1>
-        {skills.length ? (
+        {skills && skills.length ? (
           <ul className="space-y-2">
             {skills.map((skill, index) => (
               <li

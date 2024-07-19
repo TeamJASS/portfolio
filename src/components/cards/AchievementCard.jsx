@@ -10,7 +10,7 @@ import {
 import { GrCertificate } from "react-icons/gr";
 import { MdOutlineCreditScore } from "react-icons/md";
 
-const AchievementCard = ({ achievement, onEdit, onDelete }) => {
+const AchievementCard = ({ editAchievement, achievement, onDelete }) => {
   const [showButtons, setShowButtons] = useState(false);
 
   const handleMouseEnter = () => {
@@ -86,7 +86,7 @@ const AchievementCard = ({ achievement, onEdit, onDelete }) => {
       {showButtons && (
         <div className="absolute top-4 right-4 flex space-x-2">
           <button
-            onClick={onEdit}
+            onClick={editAchievement}
             className="bg-blue-500 text-white p-2 rounded-full hover:bg-blue-700"
           >
             <FaEdit className="h-5 w-5" />

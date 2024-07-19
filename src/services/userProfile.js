@@ -1,12 +1,12 @@
 import { apiClient } from "./config";
 
-export const getProfile = async (userId) => {
-  return apiClient.get(`/api/v1/users/userProfile/:${userId}`);
+export const getProfile = async () => {
+  return apiClient.get(`/users/userProfile`);
 };
-export const createProfile = async (userId, payload) => {
-  return apiClient.post(`/api/v1/users/userProfile${userId}`, payload);
+export const createProfile = async (payload) => {
+  return apiClient.post(`/users/userProfile`, payload);
 };
 
 export const updateProfile = async (userId, payload) => {
-  return apiClient.patch(`/api/v1/users/userProfile/${userId}`, payload);
+  return apiClient.patch(`/users/userProfile/${userId}`, payload);
 };

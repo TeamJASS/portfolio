@@ -1,21 +1,21 @@
 import { apiClient } from "./config";
 
 export const createProject = async (payload) => {
-  return await apiClient.post(`/api/v1/projects`, payload);
+  return await apiClient.post(`/users/projects`, payload);
 };
 
 export const getProject = async (id) => {
-  return await apiClient.get(`/api/v1/projects/${id}`);
+  return await apiClient.get(`/users/projects/${id}`);
 };
 
-export const getProjectList = async (userId) => {
-  return await apiClient.get(`/api/v1/projects/${userId}`);
+export const getProjectList = async () => {
+  return await apiClient.get(`/users/projects/`);
 };
 
 export const updateProject = async (id, payload) => {
-  return await apiClient.patch(`/api/v1/projects/${id}`, payload);
+  return await apiClient.patch(`/users/projects/${id}`, payload);
 };
 
 export const deleteProject = async (id) => {
-  return await apiClient.delete(`/api/v1/projects/${id}`);
+  return await apiClient.delete(`/users/projects/${id}`);
 };

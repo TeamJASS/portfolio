@@ -15,6 +15,8 @@ const Achievements = () => {
     endDate: "",
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editIndex, setEditIndex] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -23,7 +25,15 @@ const Achievements = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setAchievementList((prev) => [...prev, achievement]);
+    if (isEditing) {
+      const updatedAchievements = [...achievementList];
+      updatedAchievements[editIndex] = achievement;
+      setAchievementList(updatedAchievements);
+      setIsEditing(false);
+      setEditIndex(null);
+    } else {
+      setAchievementList((prev) => [...prev, achievement]);
+    }
     setAchievement({
       awards: "",
       program: "",
@@ -32,15 +42,36 @@ const Achievements = () => {
       startDate: "",
       endDate: "",
     });
-    setIsModalOpen(false); // Close the modal after submission
+    setIsModalOpen(false);
+  };
+
+  const editAchievement = (index) => {
+    setAchievement(achievementList[index]);
+    setIsEditing(true);
+    setEditIndex(index);
+    setIsModalOpen(true);
   };
 
   const openModal = () => {
+    setIsEditing(false);
+    setEditIndex(null);
+    setAchievement({
+      awards: "",
+      program: "",
+      qualification: "",
+      grade: "",
+      startDate: "",
+      endDate: "",
+    });
     setIsModalOpen(true);
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
+  };
+
+  const deleteAchievement = (index) => {
+    setAchievementList((prev) => prev.filter((_, i) => i !== index));
   };
 
   return (
@@ -52,6 +83,7 @@ const Achievements = () => {
           handleSubmit={handleSubmit}
           handleChange={handleChange}
           closeModal={closeModal}
+          isEditing={isEditing}
         />
       )}
 
@@ -70,7 +102,11 @@ const Achievements = () => {
           <div className="grid grid-cols-2 gap-7">
             {achievementList.map((achievement, index) => (
               <div key={index} className="w-full">
-                <AchievementCard achievement={achievement} />
+                <AchievementCard
+                  achievement={achievement}
+                  editAchievement={() => editAchievement(index)}
+                  onDelete={() => deleteAchievement(index)}
+                />
               </div>
             ))}
           </div>

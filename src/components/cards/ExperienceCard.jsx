@@ -1,5 +1,5 @@
-/* eslint-disable react/prop-types */
 import { useState } from "react";
+import PropTypes from "prop-types";
 import {
   FaBuilding,
   FaBriefcase,
@@ -10,7 +10,7 @@ import {
   FaTrash,
 } from "react-icons/fa";
 
-const ExperienceCard = ({ experience }) => {
+const ExperienceCard = ({ experience, editExperience, deleteExperience }) => {
   const [showButtons, setShowButtons] = useState(false);
 
   const handleMouseEnter = () => {
@@ -62,16 +62,14 @@ const ExperienceCard = ({ experience }) => {
         </p>
       </div>
       <div className="flex justify-start align-middle gap-4 w-full">
-        <div className="flex justify-start align-middle gap-4 w-full">
-          <div className="flex flex-col w-full mb-2">
-            <div className="flex items-center">
-              <FaCalendarAlt className="h-6 w-6 text-yellow-500 mr-2" />
-              <small>Start Date</small>
-            </div>
-            <p className="text-lg font-semibold text-gray-700">
-              {experience.startDate}
-            </p>
+        <div className="flex flex-col w-full mb-2">
+          <div className="flex items-center">
+            <FaCalendarAlt className="h-6 w-6 text-yellow-500 mr-2" />
+            <small>Start Date</small>
           </div>
+          <p className="text-lg font-semibold text-gray-700">
+            {experience.startDate}
+          </p>
         </div>
         <div className="flex flex-col w-full mb-2">
           <div className="flex items-center">
@@ -96,16 +94,36 @@ const ExperienceCard = ({ experience }) => {
 
       {showButtons && (
         <div className="absolute top-4 right-4 flex space-x-2">
-          <button className="bg-blue-500 text-white p-2 rounded-full hover:bg-blue-700">
+          <button
+            onClick={editExperience}
+            className="bg-blue-500 text-white p-2 rounded-full hover:bg-blue-700"
+          >
             <FaEdit className="h-5 w-5" />
           </button>
-          <button className="bg-red-500 text-white p-2 rounded-full hover:bg-red-700">
+          <button
+            onClick={deleteExperience}
+            className="bg-red-500 text-white p-2 rounded-full hover:bg-red-700"
+          >
             <FaTrash className="h-5 w-5" />
           </button>
         </div>
       )}
     </div>
   );
+};
+
+ExperienceCard.propTypes = {
+  experience: PropTypes.shape({
+    companyName: PropTypes.string.isRequired,
+    role: PropTypes.string.isRequired,
+    skills: PropTypes.string.isRequired,
+    location: PropTypes.string.isRequired,
+    startDate: PropTypes.string.isRequired,
+    endDate: PropTypes.string.isRequired,
+    responsibility: PropTypes.string.isRequired,
+  }).isRequired,
+  editExperience: PropTypes.func.isRequired,
+  deleteExperience: PropTypes.func.isRequired,
 };
 
 export default ExperienceCard;

@@ -40,7 +40,7 @@ const AddProject = (props) => {
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
     } else {
-      props.handleSubmit(); // Proceed with adding the project
+      props.handleSubmit(e); // Proceed with adding the project
     }
   };
 
@@ -235,7 +235,7 @@ const AddProject = (props) => {
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               type="submit"
             >
-              Add Project
+              {props.isEdit ? "Update Project" : "Add Project"}
             </button>
           </div>
         </form>

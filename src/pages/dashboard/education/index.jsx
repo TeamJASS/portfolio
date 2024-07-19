@@ -1,14 +1,15 @@
 import { useState } from "react";
 import AddEducation from "../../../components/popups/AddEducation";
-import { GrAddCircle } from "react-icons/gr";
 import EducationCard from "../../../components/cards/EducationCard";
 import { SlGraduation } from "react-icons/sl";
+import { GrAddCircle } from "react-icons/gr";
 import Loading from "../../../components/feedbacks/loading";
 
 const Education = () => {
   const [loading, setLoading] = useState(false);
   const [educationList, setEducationList] = useState([]);
   const [education, setEducation] = useState({
+    id: 0,
     schoolName: "",
     address: "",
     program: "",
@@ -19,6 +20,8 @@ const Education = () => {
   });
   const [errors, setErrors] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editIndex, setEditIndex] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -46,8 +49,20 @@ const Education = () => {
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
     } else {
-      setEducationList((prev) => [...prev, education]);
+      if (isEditing) {
+        const updatedEducationList = [...educationList];
+        updatedEducationList[editIndex] = education;
+        setEducationList(updatedEducationList);
+        setIsEditing(false);
+        setEditIndex(null);
+      } else {
+        setEducationList((prev) => [
+          ...prev,
+          { ...education, id: new Date().getTime() }, // Generate unique ID
+        ]);
+      }
       setEducation({
+        id: 0,
         schoolName: "",
         address: "",
         program: "",
@@ -62,10 +77,32 @@ const Education = () => {
 
   const openModal = () => {
     setIsModalOpen(true);
+    setIsEditing(false);
+    setEducation({
+      id: 0,
+      schoolName: "",
+      address: "",
+      program: "",
+      startDate: "",
+      endDate: "",
+      certificate: "",
+      educationLevel: "",
+    });
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
+  };
+
+  const editEducation = (index) => {
+    setIsEditing(true);
+    setEditIndex(index);
+    setEducation(educationList[index]);
+    setIsModalOpen(true);
+  };
+
+  const deleteEducation = (index) => {
+    setEducationList((prev) => prev.filter((_, i) => i !== index));
   };
 
   return (
@@ -81,6 +118,7 @@ const Education = () => {
               handleSubmit={handleSubmit}
               handleChange={handleChange}
               closeModal={closeModal}
+              isEditing={isEditing}
             />
           )}
 
@@ -99,7 +137,11 @@ const Education = () => {
               <div className="grid grid-cols-2 gap-7">
                 {educationList.map((edu, index) => (
                   <div key={index} className="w-full">
-                    <EducationCard edu={edu} />
+                    <EducationCard
+                      edu={edu}
+                      editEducation={() => editEducation(index)}
+                      deleteEducation={() => deleteEducation(index)}
+                    />
                   </div>
                 ))}
               </div>

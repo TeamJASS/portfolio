@@ -44,7 +44,7 @@ const links = [
   // },
 ];
 
-const DashboardSidebar = () => {
+const DashboardSidebar = ({ onPreviewClick }) => {
   const { user } = useSelector((state) => ({ ...state }));
 
   const location = useLocation();
@@ -77,8 +77,12 @@ const DashboardSidebar = () => {
             })}
           </div>
 
-          <div className="flex flex-col gap-2">
-            <div className="flex justify-start align-middle items-center gap-4 p-2 px-4 bg-gray-200 rounded-3xl text-md hover:bg-gray-300 text-gray-700 font-semibold cursor-pointer">
+          <div className="flex h-full flex-col gap-2 justify-center">
+            <div
+              // to="/dashboard/preview"
+              onClick={onPreviewClick}
+              className="flex justify-start align-middle items-center gap-4 p-2 px-4 bg-blue-200 rounded-3xl text-md hover:bg-blue-300 text-gray-700 font-semibold cursor-pointer"
+            >
               <VscPreview size={30} />
               <p className="font-bold">Preview</p>
             </div>

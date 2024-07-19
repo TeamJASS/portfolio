@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { Link } from "react-scroll";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 const links = [
   { link: "Features", path: "features" },
@@ -12,7 +12,7 @@ const links = [
 
 const Navbar = () => {
   const { user } = useSelector((state) => ({ ...state }));
-
+  const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(false);
   const [navbarHeight, setNavbarHeight] = useState(0);
   const navbarRef = useRef(null);
@@ -29,6 +29,10 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     localStorage.removeItem("portiUser");
+    dispatch({
+      type: "LOGOUT",
+      payload: null,
+    });
     window.location.reload();
   };
 
